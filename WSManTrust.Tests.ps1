@@ -41,16 +41,6 @@ Describe "Module: $module" -Tags Unit {
             "$here\$module.psd1" | Should Exist
             "$here\$module.psd1" | Should Contain "\.\\$module.psm1"
         }
-
-        It "Has a functions folder" {        
-            
-            "$here\functions" | Should Exist
-        }
-
-        It "Has functions in the functions folder" {        
-            
-            "$here\functions\*.ps1" | Should Exist
-        }
     }
 
     #Demo Note: Reminder that Pester commands are just Powershell commands
