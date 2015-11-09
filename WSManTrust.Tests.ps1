@@ -1,21 +1,21 @@
 ﻿#Requires -Modules Pester
 <#
 .SYNOPSIS
-    Tests a module for all needed components
+    Tests the WSMan Trust module
 .EXAMPLE
     Invoke-Pester 
 .NOTES
-    This is a very generic set of tests that should apply to all modules that use a functions sub folder
-
     This script originated from work found here:  https://github.com/kmarquette/PesterInAction
 #>
 
+# Maybe the top of the file should have a hashtable of commands and their parameters?
 
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path
 $module = Split-Path -Leaf $here
 
 Describe "Module: $module" -Tags Unit {
     
+    # TODO This section should use Module in the same way as the others
     Context "Module Configuration" {
         
         It "Has a root module file ($module.psm1)" {        
@@ -41,52 +41,74 @@ Describe "Module: $module" -Tags Unit {
             "$here\$module.psd1" | Should Exist
             "$here\$module.psd1" | Should Contain "\.\\$module.psm1"
         }
+
+        It "Is valid Powershell (Has no script errors)" {
+            $contents = Get-Content -Path "$here\$module.psm1" -ErrorAction Stop
+            $errors = $null
+            $null = [System.Management.Automation.PSParser]::Tokenize($contents, [ref]$errors)
+            $errors.Count | Should Be 0
+        }
     }
 
-    #Demo Note: Reminder that Pester commands are just Powershell commands
+    if (get-module $Module) {remove-module $Module}
+    import-Module "$here\$module.psd1" -ErrorAction SilentlyContinue
+    $Global:Module = Get-Module $module -ErrorAction SilentlyContinue    
+    $Global:Functions = $Global:Module.ExportedCommands.Keys
 
-    $Functions = Get-ChildItem "$here\functions\*.ps1" -ErrorAction SilentlyContinue | 
-        Where-Object {$_.name -NotMatch "Tests.ps1"}
-
-    foreach($CurrentFunction in $Functions)
-    {
-        Context "Function $module::$($CurrentFunction.BaseName)" {
+    Context 'Module loads and Functions exist' {
         
-            It "Has a Pester test" {
+        # THE NEXT LINE IS NOT GENERIC
+        $ExportedCommands = 'Get-WSManTrust','New-WSManTrust','Remove-WSManTrust'
+        
+        It 'Module should load without error' {
+            # THE NEXT LINE IS NOT GENERIC
+            $Global:Module.Name | Should Be 'WSManTrust'
+        }
 
-                $CurrentFunction.FullName.Replace(".ps1",".Tests.ps1") | should exist
+        It 'Exported commands should include all functions' {
+            $Global:Functions | Should Be $ExportedCommands
+        }
+    }
+
+    Context 'Help provided for Functions' {
+        
+        Foreach ($Function in $Global:Functions) {
+
+            $Help = Get-Help $Function
+
+            It "$Function should have a non-default Synopsis section in help" {                
+                $Help.Synopsis | Should Not Match "\r\n$Function*"
+                }
+
+            It "$Function should have help examples" {
+                $Help.Examples.Example.Count | Should Not Be 0
+                }
+
+            # THE NEXT LINE IS NOT GENERIC
+            If ($Function -eq 'Remove-WSManTrust') {
+                $ParamNames = 'hostname','all'
+                It "$Function should have correct parameter names" {
+                    (Get-Command $Function).Parameters.Keys | Should Be $ParamNames
+                }
             }
+        }
+    }
 
-            It "Has show-help comment block" {
+    Context 'Unit test each module (REQUIRES ADMIN)' {
+        
+        $List = Get-WSManTrust
+        $Example = '10.0.0.1'
+        New-WSManTrust $Example
+        $Add = Get-WSManTrust
+        Remove-WSManTrust $Example
+        $Remove = Get-WSManTrust
+    
+        It 'Hosts list should contain example host' {            
+            $Add | Should Be $($List+$Example)
+        }
 
-                $CurrentFunction.FullName | should contain '<#'
-                $CurrentFunction.FullName | should contain '#>'
-            }
-
-            It "Has show-help comment block has a synopsis" {
-
-                $CurrentFunction.FullName | should contain '\.SYNOPSIS'
-            }
-
-            It "Has show-help comment block has an example" {
-
-                $CurrentFunction.FullName | should contain '\.EXAMPLE'
-            }
-
-            It "Is an advanced function" {
-
-                $CurrentFunction.FullName | should contain 'function'
-                $CurrentFunction.FullName | should contain 'cmdletbinding'
-                $CurrentFunction.FullName | should contain 'param'
-            }
-
-            It "Is valid Powershell (Has no script errors)" {
-
-                $contents = Get-Content -Path $CurrentFunction.FullName -ErrorAction Stop
-                $errors = $null
-                $null = [System.Management.Automation.PSParser]::Tokenize($contents, [ref]$errors)
-                $errors.Count | Should Be 0
-            }
+        It 'List should not contain host after removing' {
+            $Remove | Should Be $List
         }
     }
 }
