@@ -41,7 +41,7 @@ before_deploy:
       (Get-Content $manifest -Raw).Replace("0.1.0.0", $env:APPVEYOR_BUILD_VERSION) | Out-File $manifest
       
 #---------------------------------#
-#      deployment configuration   #
+#      after build                #
 #---------------------------------#
 
 on_success:
