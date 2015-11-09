@@ -3,8 +3,6 @@
 #---------------------------------#
 os: Unstable
 version: 0.1.{build}.0
-install:
-  - cinst -y pester
 environment:
   APIKEY:
     secure: Ne1LPTeW3a/X9oC7CRnEitE+vNfGssb1rnaP8Uq74/HHGbZ5XkqLg/IQKRdDGnlm
