@@ -59,7 +59,12 @@ param(
       }
     else {
         foreach ($n in Get-WSManTrust) {[string]$list += $n+','}
-        $list = $list.replace($hostname+',','').replace($hostname,'').trimend(',')
-        Set-Item -Path WSMan:\localhost\Client\TrustedHosts -Value $list -Force
+        $list = $list.replace($hostname+',',$null).replace($hostname,$null).trimend(',')
+        if ($list.length -eq 0) {
+            Clear-Item -Path WSMan:\localhost\Client\TrustedHosts -Force
+        }
+        else {
+            Set-Item -Path WSMan:\localhost\Client\TrustedHosts -Value $list -Force
+        }
     }
 }

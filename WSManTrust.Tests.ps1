@@ -103,10 +103,6 @@ Describe "Module: $module" -Tags Unit {
         Remove-WSManTrust $Example
         $Remove = Get-WSManTrust
 
-        Write-Host "The current list is: $List"
-        Write-Host "The addition list is: $Add"
-        Write-Host "The removal list is: $Remove"
-
         It 'Hosts list should contain example host' {            
             $Add | Should Be $($List+$Example)
         }
