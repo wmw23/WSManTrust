@@ -5,6 +5,9 @@ os: Unstable
 version: 0.1.{build}.0
 install:
   - cinst -y pester
+environment:
+  APIKEY:
+    secure: Ne1LPTeW3a/X9oC7CRnEitE+vNfGssb1rnaP8Uq74/HHGbZ5XkqLg/IQKRdDGnlm
 
 #---------------------------------#
 #      build configuration        #
@@ -37,6 +40,10 @@ before_deploy:
       $manifest = Join-Path $pwd 'WSManTrust.psd1'
       (Get-Content $manifest -Raw).Replace("0.1.0.0", $env:APPVEYOR_BUILD_VERSION) | Out-File $manifest
       
-      # Publish to Gallery
-      ls $pwd
-      #Publish-Module -NuGetAPIKey $env:APIKEY -Path $pwd
+#---------------------------------#
+#      deployment configuration   #
+#---------------------------------#
+
+on_success:
+  - ps: |
+      Publish-Module -NuGetAPIKey $env:APIKEY -Path $pwd -whatif
