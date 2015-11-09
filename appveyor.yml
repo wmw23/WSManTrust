@@ -21,10 +21,6 @@ build: false
 
 test_script:
     - ps: |
-        write-host 'PSVersion Info' -foregroundcolor yellow
-        $psversiontable.psversion.major
-        $psversiontable.psversion.build
-        write-host `n
         $testResultsFile = ".\TestsResults.xml"
         $res = Invoke-Pester -OutputFormat NUnitXml -OutputFile $testResultsFile -PassThru
         (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path $testResultsFile))
@@ -37,6 +33,8 @@ test_script:
 #---------------------------------#
 
 # scripts to run before deployment
+
+# NOTE The manifest file should be dynamically identified, as should the module version data in the file
 before_deploy:
   - ps: |
       # Update Manifest File
@@ -51,4 +49,4 @@ before_deploy:
 on_success:
   - ps: |
       write-host $env:APIKEY.length
-      Publish-Module -NuGetAPIKey $env:APIKEY -Path $pwd -whatif
+      Publish-Module -NuGetAPIKey $env:APIKEY -Path $pwd
