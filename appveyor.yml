@@ -22,7 +22,8 @@ build: false
 test_script:
     - ps: |
         write-host 'PSVersion Info' -foregroundcolor yellow
-        $psversiontable
+        $psversiontable.psversion.major
+        $psversiontable.psversion.build
         write-host `n
         $testResultsFile = ".\TestsResults.xml"
         $res = Invoke-Pester -OutputFormat NUnitXml -OutputFile $testResultsFile -PassThru
@@ -50,5 +51,4 @@ before_deploy:
 on_success:
   - ps: |
       write-host $env:APIKEY.length
-      write-host $pwd
       Publish-Module -NuGetAPIKey $env:APIKEY -Path $pwd -whatif
