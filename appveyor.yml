@@ -47,6 +47,4 @@ before_deploy:
 #---------------------------------#
 
 on_success:
-  - ps: |
-      write-host $env:APIKEY.length
-      Publish-Module -NuGetAPIKey $env:APIKEY -Path $pwd
+  - ps: Publish-Module -NuGetAPIKey "$env:APIKEY" -Path $pwd -whatif
