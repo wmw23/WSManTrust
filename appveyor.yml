@@ -22,7 +22,7 @@ build: false
 test_script:
     - ps: |
         write-host 'PSVersion Info' -foregroundcolor yellow
-        $psveriontable
+        write-host $psversiontable
         write-host `n
         $testResultsFile = ".\TestsResults.xml"
         $res = Invoke-Pester -OutputFormat NUnitXml -OutputFile $testResultsFile -PassThru
