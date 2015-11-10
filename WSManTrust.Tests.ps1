@@ -96,19 +96,34 @@ Describe "Module: $module" -Tags Unit {
 
     Context 'Unit test each module (REQUIRES ADMIN)' {
         
-        $List = Get-WSManTrust
         $Example = '10.0.0.1'
-        New-WSManTrust $Example
-        $Add = Get-WSManTrust
+        $Start = (Get-Item -Path WSMan:\localhost\Client\TrustedHosts | % Value).split(',')
+        Set-Item -Path WSMan:\localhost\Client\TrustedHosts -Value $Example -Concatenate -Force
+        $List = Get-WSManTrust
+
+        It 'Should return a list that includes the example' {            
+            $List.Contains($Example) | Should Be $true
+        }
+        
         Remove-WSManTrust $Example
         $Remove = Get-WSManTrust
 
-        It 'Hosts list should contain example host' {            
-            $Add | Should Be $($List+$Example)
+        It 'List should not contain host after removing' {
+            $Remove.Contains($Example) | Should Be $false
         }
 
-        It 'List should not contain host after removing' {
-            $Remove | Should Be $List
+        New-WSManTrust $Example
+        $Add = Get-WSManTrust
+        
+        It 'Hosts list should contain example host' {            
+            $Add.Contains($Example) | Should Be $true
+        }
+
+        Remove-WSManTrust -all
+        $RemoveAll = Get-WSManTrust
+
+        It 'List should be cleared' {
+            $RemoveAll | Should Be ''
         }
     }
 }
