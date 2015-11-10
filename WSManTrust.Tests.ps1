@@ -8,12 +8,14 @@
     This script originated from work found here:  https://github.com/kmarquette/PesterInAction
 #>
 
-# Maybe the top of the file should have a hashtable of commands and their parameters?
+# TODO Maybe the top of the file should have a hashtable of commands and their parameters?
+
+
+Describe "Module: $module" -Tags Unit {
+#region Generic PS module tests
 
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path
 $module = Split-Path -Leaf $here
-
-Describe "Module: $module" -Tags Unit {
     
     # TODO This section should use Module in the same way as the others
     Context "Module Configuration" {
@@ -57,11 +59,11 @@ Describe "Module: $module" -Tags Unit {
 
     Context 'Module loads and Functions exist' {
         
-        # THE NEXT LINE IS NOT GENERIC
+        # TODO the next line is not generic
         $ExportedCommands = 'Get-WSManTrust','New-WSManTrust','Remove-WSManTrust'
         
         It 'Module should load without error' {
-            # THE NEXT LINE IS NOT GENERIC
+            # TODO the next line is not generic
             $Global:Module.Name | Should Be 'WSManTrust'
         }
 
@@ -84,7 +86,7 @@ Describe "Module: $module" -Tags Unit {
                 $Help.Examples.Example.Count | Should Not Be 0
                 }
 
-            # THE NEXT LINE IS NOT GENERIC
+            # TODO the next line is not generic
             If ($Function -eq 'Remove-WSManTrust') {
                 $ParamNames = 'hostname','all'
                 It "$Function should have correct parameter names" {
@@ -93,7 +95,9 @@ Describe "Module: $module" -Tags Unit {
             }
         }
     }
+#endregion
 
+#region Module Specific tests
     Context 'Unit test each module (REQUIRES ADMIN)' {
         
         Remove-WSManTrust -all
@@ -126,4 +130,5 @@ Describe "Module: $module" -Tags Unit {
             $Add.Contains($Example) | Should Be $true
         }
     }
+#endregion
 }
