@@ -49,5 +49,5 @@ before_deploy:
 on_success:
   - ps: |
       Import-Module PackageManagement
-      Install-PackageProvider -Name NuGet -Force | Out-Null
-      Publish-Module -NuGetAPIKey "$env:APIKEY" -Path $pwd -whatif
+      Get-Command -module PackageManagement
+      #Publish-Module -NuGetAPIKey $env:APIKEY -Path $pwd -whatif
