@@ -42,7 +42,7 @@ before_deploy:
       $manifest = Join-Path $pwd 'WSManTrust.psd1'
       (Get-Content $manifest -Raw).Replace("0.1.0.0", $env:APPVEYOR_BUILD_VERSION) | Out-File $manifest
       $confirmationPage = 'http://www.microsoft.com/en-us/download/' +  $((invoke-webrequest 'http://aka.ms/wmf5latest' -UseBasicParsing).links | ? Class -eq 'mscom-link download-button dl' | % href)
-      $directURL = (invoke-webrequest $confirmationPage -UseBasicParsing).Links | ? Class -eq 'mscom-link' | ? href -match "WindowsBlue-KB\d\d\d\d\d\d\d-x64.msu" | % href | select -first 1
+      $directURL = (invoke-webrequest $confirmationPage -UseBasicParsing).Links | ? Class -eq 'mscom-link' | ? href -match "W2K12R2-KB\d\d\d\d\d\d\d-x64.msu" | % href | select -first 1
       $download = invoke-webrequest $directURL -OutFile $env:Temp\wmf5latest.msu
       if (test-path $env:Temp\wmf5latest.msu) {
         start -wait $env:Temp\wmf5latest.msu -argumentlist '/quiet /norestart'
