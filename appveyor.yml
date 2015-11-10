@@ -5,16 +5,8 @@ os: Unstable
 version: 0.1.{build}.0
 install:
   - cinst -y pester
-  - ps: |
-      $confirmationPage = 'http://www.microsoft.com/en-us/download/' +  $((invoke-webrequest 'http://aka.ms/wmf5latest' -UseBasicParsing).links | ? Class -eq 'mscom-link download-button dl' | % href)
-      $directURL = (invoke-webrequest $confirmationPage -UseBasicParsing).Links | ? Class -eq 'mscom-link' | ? href -match "W2K12R2-KB\d\d\d\d\d\d\d-x64.msu" | % href | select -first 1
-      $download = invoke-webrequest $directURL -OutFile $env:Temp\wmf5latest.msu
-      if (test-path $env:Temp\wmf5latest.msu) {
-        start -wait $env:Temp\wmf5latest.msu -argumentlist '/quiet /norestart'
-      }
-      else { throw 'the update file is not available at the specified location' }
-      Remove-Item $env:Temp\wmf5latest.msu
-      Restart-Computer
+  - ps: Start-BitsTransfer -Destination 'C:\Program Files\PackageManagement\ProviderAssemblies\' -Source 'https://oneget.org/nuget-anycpu-2.8.3.6.exe'
+  
 environment:
   APIKEY:
     secure: Ne1LPTeW3a/X9oC7CRnEitE+vNfGssb1rnaP8Uq74/HHGbZ5XkqLg/IQKRdDGnlm
@@ -55,8 +47,9 @@ before_deploy:
 #---------------------------------#
 #      after build                #
 #---------------------------------#
+
 on_finish:
-- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+- ps: #$blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 on_success:
   - ps: Publish-Module -NuGetAPIKey $env:APIKEY -Path $pwd -whatif
