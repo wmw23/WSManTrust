@@ -10,12 +10,11 @@
 
 # TODO Maybe the top of the file should have a hashtable of commands and their parameters?
 
+$here = Split-Path -Parent $MyInvocation.MyCommand.Path
+$module = Split-Path -Leaf $here
 
 Describe "Module: $module" -Tags Unit {
 #region Generic PS module tests
-
-$here = Split-Path -Parent $MyInvocation.MyCommand.Path
-$module = Split-Path -Leaf $here
     
     # TODO This section should use Module in the same way as the others
     Context "Module Configuration" {
