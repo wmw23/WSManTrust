@@ -96,6 +96,13 @@ Describe "Module: $module" -Tags Unit {
 
     Context 'Unit test each module (REQUIRES ADMIN)' {
         
+        Remove-WSManTrust -all
+        $RemoveAll = Get-WSManTrust
+
+        It 'Should clear the list of trusted hosts' {
+            $RemoveAll | Should Be ''
+        }
+
         $Example = '10.0.0.1'
         $Start = (Get-Item -Path WSMan:\localhost\Client\TrustedHosts | % Value).split(',')
         Set-Item -Path WSMan:\localhost\Client\TrustedHosts -Value $Example -Concatenate -Force
@@ -117,13 +124,6 @@ Describe "Module: $module" -Tags Unit {
         
         It 'Hosts list should contain example host' {            
             $Add.Contains($Example) | Should Be $true
-        }
-
-        Remove-WSManTrust -all
-        $RemoveAll = Get-WSManTrust
-
-        It 'List should be cleared' {
-            $RemoveAll | Should Be ''
         }
     }
 }
