@@ -5,7 +5,7 @@ os: Unstable
 version: 0.1.{build}.0
 install:
   - cinst -y pester
-  - ps: Start-BitsTransfer -Destination 'C:\Program Files\PackageManagement\ProviderAssemblies\' -Source 'https://oneget.org/nuget-anycpu-2.8.3.6.exe'
+  - ps: Invoke-WebRequest -Uri 'https://oneget.org/nuget-anycpu-2.8.3.6.exe' -OutFile 'C:\Program Files\PackageManagement\ProviderAssemblies\nuget-anycpu.exe'
   
 environment:
   APIKEY:
