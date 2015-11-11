@@ -8,7 +8,7 @@ install:
   - ps: |
       if (!(test-path 'C:\Program Files\PackageManagement\')) {mkdir 'C:\Program Files\PackageManagement\'}
       if (!(test-path 'C:\Program Files\PackageManagement\ProviderAssemblies\')) {mkdir 'C:\Program Files\PackageManagement\ProviderAssemblies\'}
-      Invoke-WebRequest -Uri 'https://oneget.org/nuget-anycpu-2.8.3.6.exe' -OutFile 'C:\Program Files\PackageManagement\ProviderAssemblies\nuget-anycpu.exe'
+      Invoke-WebRequest -Uri 'https://oneget.org/nuget-anycpu-2.8.3.6.exe' -OutFile 'C:\Program Files\PackageManagement\ProviderAssemblies\NuGet-anycpu.exe'
   
 environment:
   APIKEY:
