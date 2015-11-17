@@ -42,7 +42,6 @@ before_deploy:
       $stagingDirectory = (Resolve-Path ..).Path
       $manifest = Join-Path $pwd 'WSManTrust.psd1'
       (Get-Content $manifest -Raw).Replace("0.1.0.0", $env:APPVEYOR_BUILD_VERSION) | Set-Content $manifest
-      Get-Content $manifest
 
 #---------------------------------#
 #      after build                #
