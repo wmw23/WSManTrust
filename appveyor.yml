@@ -7,8 +7,7 @@ install:
   - cinst -y pester
   - ps: |
       Invoke-WebRequest -Uri 'https://oneget.org/nuget-anycpu-2.8.3.6.exe' -OutFile 'C:\Program Files\PackageManagement\ProviderAssemblies\nuget-anycpu.exe'
-      if (!(test-path 'C:\Program Files\PackageManagement\') {mkdir 'C:\Program Files\PackageManagement\'}
-      if (!(test-path 'C:\Program Files\PackageManagement\ProviderAssemblies\') {mkdir 'C:\Program Files\PackageManagement\ProviderAssemblies\'}
+      if (!(test-path "$env:ProgramFiles\PackageManagement\ProviderAssemblies") {mkdir "$env:ProgramFiles\PackageManagement\ProviderAssemblies"}
   
 environment:
   APIKEY:
